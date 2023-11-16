@@ -445,7 +445,7 @@ export function fulfillStandardOrder(
     ...order,
     parameters: {
       ...order.parameters,
-      consideration: [...order.parameters.consideration, ...adjustedTips],
+      consideration: [...order.parameters.consideration, ...tips],
       totalOriginalConsiderationItems: consideration.length,
     },
   };
