@@ -368,6 +368,7 @@ export function fulfillStandardOrder(
     ? mapOrderAmountsFromUnitsToFill(order, {
         unitsToFill,
         totalSize,
+        tips
       })
     : // Else, we adjust the order by the remaining order left to be fulfilled
       mapOrderAmountsFromFilledStatus(order, {

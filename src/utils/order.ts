@@ -224,7 +224,8 @@ export const mapOrderAmountsFromUnitsToFill = (
   {
     unitsToFill,
     totalSize,
-  }: { unitsToFill: BigNumberish; totalSize: BigNumber },
+    tips = [] 
+  }: { unitsToFill: BigNumberish; totalSize: BigNumber, tips: ConsiderationItem[]; },
 ): Order => {
   const unitsToFillBn = BigNumber.from(unitsToFill);
 
@@ -238,6 +239,34 @@ export const mapOrderAmountsFromUnitsToFill = (
     totalSize = maxUnits;
   }
 
+  const adjustedTips = tips.map((tip) => ({
+    ...tip,
+    startAmount: multiplyDivision(
+      tip.startAmount,
+      unitsToFillBn,
+      totalSize,
+    ).toString(),
+    endAmount: multiplyDivision(
+      tip.endAmount,
+      unitsToFillBn,
+      totalSize,
+    ).toString(),
+  }));
+
+  const adjustedConsideration = order.parameters.consideration.map((item) => ({
+    ...item,
+    startAmount: multiplyDivision(
+      item.startAmount,
+      unitsToFillBn,
+      totalSize,
+    ).toString(),
+    endAmount: multiplyDivision(
+      item.endAmount,
+      unitsToFillBn,
+      totalSize,
+    ).toString(),
+  }));
+  
   return {
     parameters: {
       ...order.parameters,
@@ -254,19 +283,7 @@ export const mapOrderAmountsFromUnitsToFill = (
           totalSize,
         ).toString(),
       })),
-      consideration: order.parameters.consideration.map((item) => ({
-        ...item,
-        startAmount: multiplyDivision(
-          item.startAmount,
-          unitsToFillBn,
-          totalSize,
-        ).toString(),
-        endAmount: multiplyDivision(
-          item.endAmount,
-          unitsToFillBn,
-          totalSize,
-        ).toString(),
-      })),
+      consideration: [...adjustedConsideration, ...adjustedTips]
     },
     signature: order.signature,
   };
