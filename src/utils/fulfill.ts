@@ -47,7 +47,6 @@ import {
   areAllCurrenciesSame,
   mapOrderAmountsFromFilledStatus,
   mapOrderAmountsFromUnitsToFill,
-  adjustTipsForPartialFills,
   totalItemsAmount,
 } from "./order";
 import { executeAllActions, getTransactionMethods } from "./usecase";
@@ -376,17 +375,11 @@ export function fulfillStandardOrder(
         totalSize,
       });
 
-  let adjustedTips: ConsiderationItem[] = [];
-
-  if (tips.length > 0) {
-    adjustedTips = adjustTipsForPartialFills(tips, unitsToFill, totalSize);
-  }
-
   const {
     parameters: { offer, consideration },
   } = orderWithAdjustedFills;
 
-  const considerationIncludingTips = [...consideration, ...adjustedTips];
+  const considerationIncludingTips = [...consideration, ...tips];
 
   const offerCriteriaItems = offer.filter(({ itemType }) =>
     isCriteriaItem(itemType),
@@ -445,7 +438,7 @@ export function fulfillStandardOrder(
     ...order,
     parameters: {
       ...order.parameters,
-      consideration: [...order.parameters.consideration, ...adjustedTips],
+      consideration: [...order.parameters.consideration, ...tips],
       totalOriginalConsiderationItems: consideration.length,
     },
   };
