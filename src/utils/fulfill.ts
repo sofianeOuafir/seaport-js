@@ -380,7 +380,7 @@ export function fulfillStandardOrder(
     parameters: { offer, consideration },
   } = orderWithAdjustedFills;
 
-  const considerationIncludingTips = [...consideration, ...tips];
+  const considerationIncludingTips = [...consideration];
 
   const offerCriteriaItems = offer.filter(({ itemType }) =>
     isCriteriaItem(itemType),
