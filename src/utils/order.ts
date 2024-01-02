@@ -272,6 +272,32 @@ export const mapOrderAmountsFromUnitsToFill = (
   };
 };
 
+export function adjustTipsForPartialFills(
+  tips: ConsiderationItem[],
+  unitsToFill: BigNumberish,
+  totalSize: BigNumber,
+): ConsiderationItem[] {
+  const unitsToFillBn = BigNumber.from(unitsToFill);
+
+  if (unitsToFillBn.lte(0)) {
+    throw new Error("Units to fill must be greater than 0");
+  }
+
+  return tips.map((tip) => ({
+    ...tip,
+    startAmount: multiplyDivision(
+      tip.startAmount,
+      unitsToFillBn,
+      totalSize,
+    ).toString(),
+    endAmount: multiplyDivision(
+      tip.endAmount,
+      unitsToFillBn,
+      totalSize,
+    ).toString(),
+  }));
+}
+
 export const generateRandomSalt = (domain?: string) => {
   if (domain) {
     return `0x${Buffer.from(
